@@ -1,0 +1,424 @@
+<!doctype html><html lang="de"><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}
+.language-switch {display:none; text-align:right; margin-bottom:18px; font:12px var(--sans); color:var(--soft)}
+.js .language-switch {display:block}
+.language-switch select {font:inherit; padding:8px 12px; border:1px solid var(--line); border-radius:999px; background:var(--card); color:var(--ink)}
+.language-switch select:focus-visible {outline:2px solid var(--accent); outline-offset:3px}
+</style></head><body>
+<title>Zwischen den Zeilen</title>
+<meta name="description" content="Ein Spiel über das, was ihr noch nicht voneinander wisst. Noch.">
+<style>
+:root {
+  --paper:#F3EEE6; --card:#FBF8F3; --ink:#2A2521; --soft:#6E655D; --line:#DDD4C8; --accent:#B4664A;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+}
+* { box-sizing:border-box; }
+
+body { background:var(--paper); color:var(--ink); font-family:var(--serif); -webkit-font-smoothing:antialiased; min-height:100vh; }
+button { font:inherit; color:inherit; cursor:pointer; }
+.wrap { max-width:880px; margin:0 auto; padding:28px 16px 48px; }
+header { text-align:center; margin-bottom:22px; }
+.eyebrow { font-family:var(--sans); font-size:11px; letter-spacing:.24em; text-transform:uppercase; color:var(--soft); margin:0 0 10px; }
+h1 { font-weight:400; font-size:clamp(34px,7vw,54px); line-height:1; margin:0; letter-spacing:-.01em; }
+h1 em { font-style:italic; }
+.tagline { font-style:italic; color:var(--soft); margin:12px 0 0; font-size:17px; }
+
+.filters { display:flex; flex-wrap:wrap; justify-content:center; gap:8px; margin:22px 0 26px; }
+.chip { font-family:var(--sans); font-size:12.5px; border:1px solid var(--line); background:transparent; border-radius:999px; padding:7px 13px; display:inline-flex; align-items:center; gap:7px; color:var(--soft); transition:all .15s; }
+.chip i { width:7px; height:7px; border-radius:50%; background:var(--accent); display:inline-block; }
+.chip:hover { border-color:var(--ink); color:var(--ink); }
+.chip.on { background:var(--ink); color:var(--paper); border-color:var(--ink); }
+.chip.on i { background:var(--paper); }
+
+.stage { display:flex; justify-content:center; perspective:1400px; }
+.card { position:relative; width:min(100%,420px); aspect-ratio:5/7; background:var(--card); border-radius:18px; padding:clamp(22px,6vw,34px);
+  box-shadow:0 1px 0 rgba(0,0,0,.04), 0 18px 40px -18px rgba(60,40,20,.35); display:flex; flex-direction:column; border:1px solid #ECE4D8; }
+.card::before { content:""; position:absolute; left:0; right:0; top:0; height:5px; background:var(--accent); opacity:.85; }
+#cardBody { flex:1; display:flex; flex-direction:column; }
+.card { overflow:hidden; }
+.filters { display:none; }
+.js .filters { display:flex; }
+.card.anim { animation:deal .38s cubic-bezier(.2,.7,.2,1); }
+@keyframes deal { from { opacity:0; transform:translateY(14px) rotate(-1.2deg); } to { opacity:1; transform:none; } }
+.card-top { display:flex; justify-content:space-between; align-items:center; gap:10px; font-family:var(--sans); font-size:11px; letter-spacing:.18em; text-transform:uppercase; }
+.cat { color:var(--accent); font-weight:600; }
+.tag { color:var(--soft); border:1px solid var(--line); border-radius:999px; padding:3px 9px; letter-spacing:.12em; font-size:10px; white-space:nowrap; }
+.q { font-size:clamp(21px,5.2vw,28px); line-height:1.28; margin:auto 0; padding:22px 0 14px; hyphens:auto; -webkit-hyphens:auto; text-wrap:pretty; }
+.follow { font-style:italic; color:var(--soft); font-size:17px; margin:0 0 18px; line-height:1.4; }
+.follow span { font-family:var(--sans); font-style:normal; font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:var(--accent); margin-right:6px; }
+.help { padding-right:34px; font-family:var(--sans); font-size:13.5px; line-height:1.45; color:var(--soft); margin:0 0 16px; padding-left:12px; border-left:2px solid var(--line); }
+.ans { margin:0 0 16px; padding-right:34px; font-family:var(--sans); font-size:14px; }
+.ans summary { cursor:pointer; color:var(--accent); font-weight:600; letter-spacing:.04em; list-style:none; display:inline-block; border:1px solid var(--line); border-radius:999px; padding:6px 14px; }
+.ans summary::-webkit-details-marker { display:none; }
+.ans[open] summary { display:none; }
+.ans p { margin:0; line-height:1.5; color:var(--ink); }
+.card-foot { display:flex; justify-content:space-between; font-family:var(--sans); font-size:10.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--soft); border-top:1px solid var(--line); padding-top:12px; }
+.mark { font-family:var(--serif); font-style:italic; text-transform:none; letter-spacing:0; font-size:13px; }
+.fav { position:absolute; right:clamp(14px,4vw,24px); bottom:calc(clamp(22px,6vw,34px) + 34px); background:none; border:0; padding:8px; color:var(--soft); display:none; }
+.js .fav { display:block; }
+.fav svg { width:22px; height:22px; }
+.fav.on { color:var(--accent); }
+.fav.on svg path { fill:currentColor; }
+
+.controls { display:none; justify-content:center; align-items:center; gap:10px; margin:24px 0 8px; }
+.js .controls { display:flex; }
+.btn { font-family:var(--sans); font-size:14px; border-radius:999px; padding:13px 22px; border:1px solid var(--ink); background:transparent; }
+.btn.primary { background:var(--ink); color:var(--paper); padding:13px 30px; }
+.btn:disabled { opacity:.3; cursor:default; }
+.status { text-align:center; font-family:var(--sans); font-size:12px; color:var(--soft); letter-spacing:.06em; min-height:18px; }
+
+.tools { display:none; justify-content:center; gap:22px; margin-top:22px; flex-wrap:wrap; }
+.js .tools { display:flex; }
+.link { background:none; border:0; font-family:var(--sans); font-size:13px; color:var(--soft); text-decoration:underline; text-underline-offset:4px; text-decoration-color:var(--line); padding:4px; }
+.link:hover { color:var(--ink); }
+
+.score { display:none; justify-content:center; gap:14px; margin-top:18px; font-family:var(--sans); font-size:13px; }
+.score.open { display:flex; }
+.pl { display:flex; align-items:center; gap:8px; border:1px solid var(--line); border-radius:999px; padding:5px 6px 5px 14px; background:var(--card); }
+.pl input { border:0; background:transparent; font:inherit; width:74px; color:var(--ink); outline:none; }
+.pl b { min-width:18px; text-align:center; font-variant-numeric:tabular-nums; }
+.pl button { width:28px; height:28px; border-radius:50%; border:1px solid var(--line); background:transparent; line-height:1; }
+
+section.panel { max-width:560px; margin:40px auto 0; padding-top:28px; border-top:1px solid var(--line); }
+section.panel h2 { font-weight:400; font-style:italic; font-size:24px; margin:0 0 14px; }
+.rules ol { padding-left:20px; margin:0; line-height:1.55; font-size:17px; }
+.rules li { margin-bottom:6px; padding-left:4px; }
+.rules .bonus { font-style:italic; color:var(--soft); margin:14px 0 0; }
+.hint { font-family:var(--sans); font-size:12px; color:var(--soft); margin-top:18px; line-height:1.5; }
+#later { display:none; }
+#later.open { display:block; }
+#later form { display:flex; gap:8px; margin-bottom:10px; }
+#later input { flex:1; min-width:0; font:16px var(--serif); border:1px solid var(--line); border-radius:999px; padding:10px 16px; background:var(--card); color:var(--ink); }
+#later ul { list-style:none; padding:0; margin:0; }
+#later li { display:flex; justify-content:space-between; align-items:center; gap:10px; border-bottom:1px solid var(--line); padding:10px 0; font-size:17px; }
+#later li button { background:none; border:0; color:var(--soft); font-size:18px; padding:4px 8px; }
+.sub { color:var(--soft); font-size:15px; margin:-6px 0 14px; font-style:italic; }
+#favs { display:none; }
+#favs.open { display:block; }
+#favs ul { list-style:none; padding:0; margin:0; }
+#favs li { border-bottom:1px solid var(--line); }
+#favs li button { background:none; border:0; text-align:left; width:100%; padding:12px 0; font-size:17px; line-height:1.35; display:flex; gap:12px; }
+#favs li small { font-family:var(--sans); font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:var(--accent); min-width:30px; padding-top:5px; }
+.empty { color:var(--soft); font-style:italic; }
+.all-list h3 { font-family:var(--sans); font-size:11px; letter-spacing:.2em; text-transform:uppercase; color:var(--soft); margin:22px 0 6px; }
+.all-list ol { line-height:1.45; }
+footer { text-align:center; margin-top:44px; font-style:italic; color:var(--soft); font-size:14px; }
+@media (max-width:520px) {
+  .wrap { padding-top:22px; }
+  .filters { flex-wrap:nowrap; overflow-x:auto; justify-content:flex-start; margin-left:-16px; margin-right:-16px; padding:0 16px 4px; scrollbar-width:none; }
+  .filters::-webkit-scrollbar { display:none; }
+  .chip { flex:0 0 auto; }
+  .card { aspect-ratio:auto; min-height:min(112vw,470px); }
+  .btn { padding:13px 18px; }
+}
+@media (prefers-reduced-motion:reduce) { .card.anim { animation:none; } }
+</style>
+<div class="wrap">
+  <header>
+    <div class="language-switch"><label for="language">DE / EN</label> <select id="language" aria-label="Language / Sprache"><option value="de" lang="de">Deutsch</option><option value="en" lang="en">English</option></select></div>
+    <p class="eyebrow">Ein Gesprächsspiel für zwei</p>
+    <h1>Zwischen den <em>Zeilen</em></h1>
+    <p class="tagline">Ein Spiel über das, was ihr noch nicht voneinander wisst. Noch.</p>
+  </header>
+
+  <nav class="filters" aria-label="Kategorie wählen"><button class="chip on" data-f="all" aria-pressed="true">Alle gemischt</button><button class="chip" data-f="klein" aria-pressed="false" style="--accent:#B4664A"><i></i>Kleinigkeiten</button><button class="chip" data-f="gedanken" aria-pressed="false" style="--accent:#5E7A6A"><i></i>Gedankenlesen</button><button class="chip" data-f="abenteuer" aria-pressed="false" style="--accent:#B38A3E"><i></i>Abenteuer &amp; Was-wäre-wenn</button><button class="chip" data-f="klein2" aria-pressed="false" style="--accent:#4F6580"><i></i>Das Kleingedruckte</button><button class="chip" data-f="zeilen" aria-pressed="false" style="--accent:#7A5368"><i></i>Zwischen den Zeilen</button><button class="chip" data-f="joker" aria-pressed="false" style="--accent:#3D3935"><i></i>Joker</button></nav>
+
+  <main class="stage">
+    <article class="card" id="card" data-l="1" style="--accent:#B4664A" aria-live="polite">
+      <div id="cardBody"><div class="card-top"><span class="cat" style="--accent:#B4664A">Kleinigkeiten</span></div>
+      <p class="q">Was hebt deine Laune zuverlässig in unter fünf Minuten?</p>
+      <p class="help">Ein Song, ein Snack, ein bestimmter Mensch, ein Ort?</p>
+      <div class="card-foot"><span class="no">Nº 01</span><span class="mark">Zwischen den Zeilen</span></div></div>
+      <button class="fav" id="fav" aria-label="Karte merken" title="Merken"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 3.5h12v17l-6-4.2-6 4.2z" stroke-linejoin="round"/></svg></button>
+    </article>
+  </main>
+
+  <div class="controls">
+    <button class="btn" id="back" disabled aria-label="Vorherige Karte">← Zurück</button>
+    <button class="btn primary" id="next">Nächste Karte</button>
+  </div>
+  <p class="status" id="status"></p>
+
+  <div class="tools">
+    <button class="link" id="favToggle">Gemerkt (0)</button>
+    <button class="link" id="laterToggle">Irgendwann mal (0)</button>
+    <button class="link" id="scoreToggle">Punkte zählen</button>
+    <button class="link" id="reset">Neu mischen</button>
+  </div>
+
+  <div class="score" id="score">
+    <div class="pl"><input value="" placeholder="Name" aria-label="Name Person 1"><b>0</b><button data-d="-1" aria-label="Punkt abziehen">−</button><button data-d="1" aria-label="Punkt hinzufügen">+</button></div>
+    <div class="pl"><input value="" placeholder="Name" aria-label="Name Person 2"><b>0</b><button data-d="-1" aria-label="Punkt abziehen">−</button><button data-d="1" aria-label="Punkt hinzufügen">+</button></div>
+  </div>
+
+  <section class="panel" id="later">
+    <h2>Irgendwann mal</h2>
+    <p class="sub">Wenn eine Antwort nach einem Plan klingt, kommt sie hierher.</p>
+    <form id="laterForm"><input id="laterInput" placeholder="z. B. Sonnenaufgang auf einem Berg" aria-label="Idee notieren" autocomplete="off"><button class="btn" type="submit">Notieren</button></form>
+    <ul id="laterList"></ul>
+  </section>
+
+  <section class="panel" id="favs">
+    <h2>Gemerkte Karten</h2>
+    <ul id="favList"></ul>
+  </section>
+
+  <section class="panel rules">
+    <h2>So wird gespielt</h2>
+    <ol><li>Zieht abwechselnd eine Karte.</li><li>Beide antworten – außer die Karte sagt etwas anderes.</li><li>Bei <em>Gedankenlesen</em>, <em>Schnellfeuer</em> und <em>Wahr oder Quatsch</em> tippt ihr zuerst. Dann wird aufgelöst.</li><li>Kleine Beispiele auf der Karte helfen beim Antworten. Sie sind keine Vorgabe.</li><li>Jede Karte darf übersprungen werden. Ohne Begründung.</li><li>Am Anfang kommen eher leichte Karten. Je länger ihr spielt, desto öfter mischt sich eine tiefere darunter.</li></ol>
+    <p class="bonus">Optional: Jeder richtige Tipp bringt einen Punkt. Wer am Ende weniger hat, besorgt den Nachtisch.</p>
+    <p class="hint">Weiter mit <b>Nächste Karte</b>, Leertaste oder Wischen nach links. Zurück mit <b>←</b> oder Wischen nach rechts. Ein Lesezeichen merkt sich Karten für später, und unter „Irgendwann mal“ landen Ideen, die ihr wirklich machen wollt.<br>
+    Falls hier keine Knöpfe erscheinen: Die Datei herunterladen und in einem normalen Browser öffnen (Safari, Chrome, Firefox, Edge) – nicht in einer Dateivorschau.</p>
+  </section>
+
+  <noscript>
+    <section class="panel all-list">
+      <h2>Alle Karten</h2>
+      <p class="hint">In dieser Ansicht läuft kein JavaScript, deshalb steht hier das ganze Deck als Liste. Für die interaktive Version die Datei in einem normalen Browser öffnen.</p>
+      <h3>Kleinigkeiten</h3><ol start="1"><li>Was hebt deine Laune zuverlässig in unter fünf Minuten?</li><li>Womit verbringst du gerade die meiste Freizeit – und womit würdest du gern mehr Zeit verbringen?</li><li>Wie sieht ein ganz normaler Dienstag bei dir aus? Vom Wecker bis zum Einschlafen. <em>Welcher Moment davon ist der beste?</em></li><li>Wofür gibst du überraschend viel Geld aus?</li><li>Welches Hobby hast du mal mit voller Begeisterung angefangen – und wieder aufgegeben? <em>Was war der Moment, in dem es vorbei war?</em></li><li>Welches Gericht kannst du richtig gut kochen – und welches würdest du nie im Leben selbst versuchen?</li><li>Welches Talent hast du, das man dir nicht ansieht?</li><li>Bring in deine Reihenfolge: Sonnenaufgang, Sternenhimmel, Gewitter, erster Schnee.</li><li>Welches Geschenk hat dich mal richtig erwischt – im besten Sinne? Was hat es so gut gemacht?</li><li>Wobei bist du überraschend pingelig – obwohl es eigentlich völlig egal sein sollte?</li></ol><h3>Gedankenlesen</h3><ol start="11"><li>Wie sieht mein perfekter Sonntag aus – von morgens bis abends?</li><li>Worin bin ich heimlich ehrgeizig?</li><li>Wie viele ungelesene Nachrichten habe ich gerade? Wer auf zehn genau liegt, bekommt den Punkt. <em>Beweisfoto bitte.</em></li><li>Was mache ich als Erstes, wenn ich in einer neuen Stadt ankomme?</li><li>Welches Tier wäre ich? Schmeichelhaft oder ehrlich – deine Entscheidung.</li><li>Was bestelle ich, wenn ich die Speisekarte nicht lesen kann und einfach auf etwas zeigen muss?</li><li>Jemand bereitet etwas Besonderes für mich vor. Will ich überrascht werden – oder lieber mitplanen?</li><li>Erlebnis oder Gegenstand: Was bleibt mir von einem Geschenk länger im Kopf?</li><li>Was war mein erster Eindruck von dir? <em>Und wie falsch lag ich?</em></li><li>Was ist mir als Erstes an dir aufgefallen – abgesehen vom Offensichtlichen?</li><li>Was glaubst du: Wann habe ich gemerkt, dass ich dich mehr als nur nett finde?</li></ol><h3>Abenteuer &amp; Was-wäre-wenn</h3><ol start="22"><li>Was wolltest du schon ewig mal ausprobieren und hast es irgendwie nie gemacht?</li><li>Ein freies Wochenende, alles im Umkreis von drei Stunden ist erlaubt. Wie sieht der Plan aus?</li><li>Lieber einen Tag lang etwas komplett Neues lernen – oder einen Tag mit ordentlich Adrenalin?</li><li>Gipfelwanderung, Rennen gegen die Uhr, Kurs bei einem Profi oder eine Nacht unter Sternen. Deine Reihenfolge?</li><li>Roadtrip-Grundsatzfragen: Wer bestimmt die Musik, wie viele Stopps sind erlaubt, und was ist der ultimative Tankstellen-Snack?</li><li>Was ist das Spontanste, das du je gemacht hast?</li><li>Du darfst einen Tag lang bei jemandem in die Lehre gehen – egal wem, egal in welchem Handwerk. Bei wem?</li><li>Jemand plant einen ganzen Tag für dich. Was würde ihn richtig gut machen – und was würde ihn sofort ruinieren?</li><li>Erzähl vom besten Tag, den du je hattest. Oder zumindest von einem ernsthaften Kandidaten.</li><li>Welches Abenteuer sollten wir zwei mal zusammen machen? <em>Und wer von uns gibt als Erstes auf?</em></li></ol><h3>Das Kleingedruckte</h3><ol start="32"><li>Schreiben oder telefonieren? Und ab wann ist eine Sprachnachricht zu lang?</li><li>Nach einem anstrengenden Tag: Gesellschaft, Ablenkung, darüber reden oder Ruhe?</li><li>Welche kleine Aufmerksamkeit freut dich mehr, als sie eigentlich sollte?</li><li>Was verstehen Leute an dir oft falsch, wenn sie dich gerade erst kennenlernen?</li><li>Was nervt dich schneller, als man es dir zutrauen würde?</li><li>Welche deiner Eigenarten braucht eine gewisse Eingewöhnungszeit? Warnhinweise ausdrücklich erwünscht.</li><li>Woran merkt man, dass du jemanden magst – auch wenn du es nicht sagst?</li><li>Was sollte man über dich wissen, um dich zu verstehen, wenn du gerade still bist?</li><li>Bei einem Missverständnis: sofort klären oder erst mal Abstand? <em>Und was hilft dir dabei?</em></li><li>Für welches Kompliment hast du insgeheim eine Schwäche?</li></ol><h3>Zwischen den Zeilen</h3><ol start="42"><li>Worüber hast du in den letzten Jahren deine Meinung geändert?</li><li>Was hätte dein sechzehnjähriges Ich zu deinem heutigen Leben gesagt?</li><li>Welche Erinnerung würdest du gern noch einmal zum ersten Mal erleben?</li><li>Was möchtest du in den nächsten fünf Jahren unbedingt noch erleben?</li><li>Wovor hattest du zuletzt richtig Respekt – und hast es trotzdem gemacht?</li><li>Worauf bist du stolz, obwohl es in Gesprächen nie vorkommt?</li><li>Was ist dir bei Menschen, mit denen du viel Zeit verbringst, wirklich wichtig – und was ist ein No-Go?</li><li>Wer hat dich als Mensch am meisten geprägt?</li><li>Was war die schwierigste Phase der letzten Jahre – und was hat dir da rausgeholfen?</li><li>Welcher Moment der letzten Wochen war für dich ein kleines Highlight?</li><li>Vervollständige den Satz: „Mit dir ist es leicht, …“</li><li>Wann hast du gemerkt, dass aus „befreundet“ gerade etwas anderes wird?</li></ol><h3>Joker</h3><ol start="54"><li>Kaffee oder Tee? Hund oder Katze? Berge oder Meer? Früh oder spät? Süß oder salzig?</li><li>Museum oder Freizeitpark? Plan oder ins Blaue? Gewinnen oder Spaß? Kochen oder bestellen? Sterne oder Stadtlichter?</li><li>Erstes Konzert? Erstes Handy? Erster Promi-Schwarm? Erster Job? Erstes Mal im Ausland?</li><li>Ein Tag auf der Venus dauert länger als ein Jahr auf der Venus. <em>Auflösung: Wahr. Eine Drehung um sich selbst dauert dort etwa 243 Erdtage, eine Runde um die Sonne nur rund 225.</em></li><li>Die Chinesische Mauer kann man vom Mond aus mit bloßem Auge sehen. <em>Auflösung: Quatsch. Dafür ist sie viel zu schmal. Selbst aus der Erdumlaufbahn ist sie ohne Hilfsmittel kaum zu erkennen.</em></li><li>Seeotter halten sich beim Schlafen manchmal an den Pfoten fest, damit sie nicht auseinandertreiben. <em>Auflösung: Wahr. Manche wickeln sich zusätzlich in Seetang ein.</em></li><li>Goldfische haben ein Gedächtnis von nur drei Sekunden. <em>Auflösung: Quatsch. Goldfische können sich Dinge über Monate merken und lassen sich sogar trainieren.</em></li><li>Ein Blitz ist heißer als die Oberfläche der Sonne. <em>Auflösung: Wahr. Ein Blitzkanal wird um die 30.000 °C heiß, die Sonnenoberfläche etwa 5.500 °C.</em></li><li>Erzähl einen Fun Fact über dich, den niemand erraten würde.</li><li>Zwei Wahrheiten, eine Lüge. Thema: deine Kindheit.</li><li>„Überraschungen sind überbewertet.“</li><li>„Karaoke ist immer eine gute Idee.“</li><li>Zeig das letzte Foto, das du von Essen gemacht hast. Wo war das?</li><li>Zeig ein Foto von einem Ort, an den du sofort zurückwürdest.</li><li>Welche völlig irrationale Meinung verteidigst du bis zum Ende?</li><li>Du musst gleich einen 20-minütigen Vortrag halten. Ohne Vorbereitung. Was ist dein Thema?</li><li>Bring mir in drei Minuten etwas bei, das du gut kannst.</li><li>Wir treten morgen als Team in einem Wettbewerb an. Welcher gibt uns die besten Chancen? <em>Und wer von uns ist der Schwachpunkt?</em></li><li>Wäre unser bisheriges Kennenlernen ein Film: Welches Genre – und wie hieße er?</li><li>Beschreibt euch gegenseitig in genau drei Wörtern. Keine Erklärungen, keine Nachverhandlungen.</li><li>Sag mir etwas, das du an mir magst, aber bisher noch nicht gesagt hast.</li></ol>
+    </section>
+  </noscript>
+
+  <footer>Zwischen den Zeilen · 74 Karten · sechs Kategorien</footer>
+</div>
+
+<script>
+(function() {
+  "use strict";
+  var DATA = {"cats": [{"key": "klein", "name": "Kleinigkeiten", "sub": "Alltag, Hobbys, Macken und das, was den Tag besser macht.", "color": "#B4664A"}, {"key": "gedanken", "name": "Gedankenlesen", "sub": "Erst tippen beide, dann wird aufgelöst. Ein Punkt pro Treffer.", "color": "#5E7A6A"}, {"key": "abenteuer", "name": "Abenteuer & Was-wäre-wenn", "sub": "Pläne, Ausflüge und Dinge, die man mal tun sollte.", "color": "#B38A3E"}, {"key": "klein2", "name": "Das Kleingedruckte", "sub": "Wie jemand tickt. Steht selten auf der Verpackung.", "color": "#4F6580"}, {"key": "zeilen", "name": "Zwischen den Zeilen", "sub": "Geschichten, Erinnerungen und ein bisschen mehr.", "color": "#7A5368"}, {"key": "joker", "name": "Joker", "sub": "Schnellfeuer, Quiz, Hot Takes und kleine Mutproben.", "color": "#3D3935"}], "cards": [{"c": "klein", "l": 1, "q": "Was hebt deine Laune zuverlässig in unter fünf Minuten?", "h": "Ein Song, ein Snack, ein bestimmter Mensch, ein Ort?", "n": 1}, {"c": "klein", "l": 1, "q": "Womit verbringst du gerade die meiste Freizeit – und womit würdest du gern mehr Zeit verbringen?", "n": 2}, {"c": "klein", "l": 1, "q": "Wie sieht ein ganz normaler Dienstag bei dir aus? Vom Wecker bis zum Einschlafen.", "f": "Welcher Moment davon ist der beste?", "n": 3}, {"c": "klein", "l": 1, "q": "Wofür gibst du überraschend viel Geld aus?", "h": "Kaffee, Sneaker, Technik, Essen gehen, Bücher, Pflanzen …", "n": 4}, {"c": "klein", "l": 1, "q": "Welches Hobby hast du mal mit voller Begeisterung angefangen – und wieder aufgegeben?", "f": "Was war der Moment, in dem es vorbei war?", "n": 5}, {"c": "klein", "l": 1, "q": "Welches Gericht kannst du richtig gut kochen – und welches würdest du nie im Leben selbst versuchen?", "n": 6}, {"c": "klein", "l": 1, "q": "Welches Talent hast du, das man dir nicht ansieht?", "h": "Kleine Talente zählen: rückwärts sprechen, Orientierung, Akzente …", "n": 7}, {"c": "klein", "l": 1, "q": "Bring in deine Reihenfolge: Sonnenaufgang, Sternenhimmel, Gewitter, erster Schnee.", "t": "Rangliste", "n": 8}, {"c": "klein", "l": 2, "q": "Welches Geschenk hat dich mal richtig erwischt – im besten Sinne? Was hat es so gut gemacht?", "n": 9}, {"c": "klein", "l": 2, "q": "Wobei bist du überraschend pingelig – obwohl es eigentlich völlig egal sein sollte?", "h": "Wie die Spülmaschine eingeräumt wird, Schriftarten, Pünktlichkeit …", "n": 10}, {"c": "gedanken", "l": 1, "q": "Wie sieht mein perfekter Sonntag aus – von morgens bis abends?", "n": 11}, {"c": "gedanken", "l": 1, "q": "Worin bin ich heimlich ehrgeizig?", "n": 12}, {"c": "gedanken", "l": 1, "q": "Wie viele ungelesene Nachrichten habe ich gerade? Wer auf zehn genau liegt, bekommt den Punkt.", "f": "Beweisfoto bitte.", "n": 13}, {"c": "gedanken", "l": 1, "q": "Was mache ich als Erstes, wenn ich in einer neuen Stadt ankomme?", "n": 14}, {"c": "gedanken", "l": 1, "q": "Welches Tier wäre ich? Schmeichelhaft oder ehrlich – deine Entscheidung.", "n": 15}, {"c": "gedanken", "l": 1, "q": "Was bestelle ich, wenn ich die Speisekarte nicht lesen kann und einfach auf etwas zeigen muss?", "n": 16}, {"c": "gedanken", "l": 2, "q": "Jemand bereitet etwas Besonderes für mich vor. Will ich überrascht werden – oder lieber mitplanen?", "n": 17}, {"c": "gedanken", "l": 2, "q": "Erlebnis oder Gegenstand: Was bleibt mir von einem Geschenk länger im Kopf?", "n": 18}, {"c": "gedanken", "l": 3, "q": "Was war mein erster Eindruck von dir?", "f": "Und wie falsch lag ich?", "n": 19}, {"c": "gedanken", "l": 3, "q": "Was ist mir als Erstes an dir aufgefallen – abgesehen vom Offensichtlichen?", "h": "Erst raten, dann verraten. Beide Richtungen.", "n": 20}, {"c": "gedanken", "l": 4, "q": "Was glaubst du: Wann habe ich gemerkt, dass ich dich mehr als nur nett finde?", "h": "Ein Ort, ein Tag oder ein Satz reicht als Tipp.", "n": 21}, {"c": "abenteuer", "l": 1, "q": "Was wolltest du schon ewig mal ausprobieren und hast es irgendwie nie gemacht?", "h": "Ein Sport, ein Kurs, ein Ort, ein Essen, ein Konzert …", "n": 22}, {"c": "abenteuer", "l": 1, "q": "Ein freies Wochenende, alles im Umkreis von drei Stunden ist erlaubt. Wie sieht der Plan aus?", "n": 23}, {"c": "abenteuer", "l": 1, "q": "Lieber einen Tag lang etwas komplett Neues lernen – oder einen Tag mit ordentlich Adrenalin?", "t": "Entweder-oder", "n": 24}, {"c": "abenteuer", "l": 1, "q": "Gipfelwanderung, Rennen gegen die Uhr, Kurs bei einem Profi oder eine Nacht unter Sternen. Deine Reihenfolge?", "t": "Rangliste", "n": 25}, {"c": "abenteuer", "l": 1, "q": "Roadtrip-Grundsatzfragen: Wer bestimmt die Musik, wie viele Stopps sind erlaubt, und was ist der ultimative Tankstellen-Snack?", "n": 26}, {"c": "abenteuer", "l": 1, "q": "Was ist das Spontanste, das du je gemacht hast?", "n": 27}, {"c": "abenteuer", "l": 1, "q": "Du darfst einen Tag lang bei jemandem in die Lehre gehen – egal wem, egal in welchem Handwerk. Bei wem?", "h": "Sterneköchin, Tätowierer, Astronautin, Barista, Bergführer …", "n": 28}, {"c": "abenteuer", "l": 2, "q": "Jemand plant einen ganzen Tag für dich. Was würde ihn richtig gut machen – und was würde ihn sofort ruinieren?", "n": 29}, {"c": "abenteuer", "l": 2, "q": "Erzähl vom besten Tag, den du je hattest. Oder zumindest von einem ernsthaften Kandidaten.", "n": 30}, {"c": "abenteuer", "l": 2, "q": "Welches Abenteuer sollten wir zwei mal zusammen machen?", "f": "Und wer von uns gibt als Erstes auf?", "n": 31}, {"c": "klein2", "l": 1, "q": "Schreiben oder telefonieren? Und ab wann ist eine Sprachnachricht zu lang?", "n": 32}, {"c": "klein2", "l": 2, "q": "Nach einem anstrengenden Tag: Gesellschaft, Ablenkung, darüber reden oder Ruhe?", "n": 33}, {"c": "klein2", "l": 2, "q": "Welche kleine Aufmerksamkeit freut dich mehr, als sie eigentlich sollte?", "h": "Kaffee mitbringen, sich an etwas erinnern, ein Foto schicken …", "n": 34}, {"c": "klein2", "l": 2, "q": "Was verstehen Leute an dir oft falsch, wenn sie dich gerade erst kennenlernen?", "n": 35}, {"c": "klein2", "l": 2, "q": "Was nervt dich schneller, als man es dir zutrauen würde?", "h": "Unpünktlichkeit, Schmatzen, vage Pläne, laute Telefonate …", "n": 36}, {"c": "klein2", "l": 2, "q": "Welche deiner Eigenarten braucht eine gewisse Eingewöhnungszeit? Warnhinweise ausdrücklich erwünscht.", "n": 37}, {"c": "klein2", "l": 3, "q": "Woran merkt man, dass du jemanden magst – auch wenn du es nicht sagst?", "n": 38}, {"c": "klein2", "l": 3, "q": "Was sollte man über dich wissen, um dich zu verstehen, wenn du gerade still bist?", "h": "Ich brauche kurz Zeit · ich schreibe lieber, als ich rede · ich werde albern, wenn ich nervös bin …", "n": 39}, {"c": "klein2", "l": 3, "q": "Bei einem Missverständnis: sofort klären oder erst mal Abstand?", "f": "Und was hilft dir dabei?", "n": 40}, {"c": "klein2", "l": 3, "q": "Für welches Kompliment hast du insgeheim eine Schwäche?", "n": 41}, {"c": "zeilen", "l": 2, "q": "Worüber hast du in den letzten Jahren deine Meinung geändert?", "n": 42}, {"c": "zeilen", "l": 2, "q": "Was hätte dein sechzehnjähriges Ich zu deinem heutigen Leben gesagt?", "n": 43}, {"c": "zeilen", "l": 2, "q": "Welche Erinnerung würdest du gern noch einmal zum ersten Mal erleben?", "n": 44}, {"c": "zeilen", "l": 2, "q": "Was möchtest du in den nächsten fünf Jahren unbedingt noch erleben?", "n": 45}, {"c": "zeilen", "l": 3, "q": "Wovor hattest du zuletzt richtig Respekt – und hast es trotzdem gemacht?", "n": 46}, {"c": "zeilen", "l": 3, "q": "Worauf bist du stolz, obwohl es in Gesprächen nie vorkommt?", "n": 47}, {"c": "zeilen", "l": 3, "q": "Was ist dir bei Menschen, mit denen du viel Zeit verbringst, wirklich wichtig – und was ist ein No-Go?", "n": 48}, {"c": "zeilen", "l": 3, "q": "Wer hat dich als Mensch am meisten geprägt?", "h": "Familie, eine Lehrerin, ein Freund, jemand völlig Unerwartetes …", "n": 49}, {"c": "zeilen", "l": 3, "q": "Was war die schwierigste Phase der letzten Jahre – und was hat dir da rausgeholfen?", "n": 50}, {"c": "zeilen", "l": 3, "q": "Welcher Moment der letzten Wochen war für dich ein kleines Highlight?", "h": "Ein Satz, ein Ort oder ein Augenblick reicht.", "n": 51}, {"c": "zeilen", "l": 4, "q": "Vervollständige den Satz: „Mit dir ist es leicht, …“", "h": "Beide antworten. Ein halber Satz zählt auch.", "t": "Satzanfang", "n": 52}, {"c": "zeilen", "l": 4, "q": "Wann hast du gemerkt, dass aus „befreundet“ gerade etwas anderes wird?", "n": 53}, {"c": "joker", "l": 1, "q": "Kaffee oder Tee? Hund oder Katze? Berge oder Meer? Früh oder spät? Süß oder salzig?", "h": "Auf „drei“ antworten beide gleichzeitig. Jede Übereinstimmung ein Punkt.", "t": "Schnellfeuer", "n": 54}, {"c": "joker", "l": 1, "q": "Museum oder Freizeitpark? Plan oder ins Blaue? Gewinnen oder Spaß? Kochen oder bestellen? Sterne oder Stadtlichter?", "h": "Auf „drei“ antworten beide gleichzeitig. Jede Übereinstimmung ein Punkt.", "t": "Schnellfeuer", "n": 55}, {"c": "joker", "l": 1, "q": "Erstes Konzert? Erstes Handy? Erster Promi-Schwarm? Erster Job? Erstes Mal im Ausland?", "h": "Kurze Antworten. Nachfragen erst danach.", "t": "Schnellfeuer", "n": 56}, {"c": "joker", "l": 1, "q": "Ein Tag auf der Venus dauert länger als ein Jahr auf der Venus.", "a": "Wahr. Eine Drehung um sich selbst dauert dort etwa 243 Erdtage, eine Runde um die Sonne nur rund 225.", "t": "Wahr oder Quatsch", "n": 57}, {"c": "joker", "l": 1, "q": "Die Chinesische Mauer kann man vom Mond aus mit bloßem Auge sehen.", "a": "Quatsch. Dafür ist sie viel zu schmal. Selbst aus der Erdumlaufbahn ist sie ohne Hilfsmittel kaum zu erkennen.", "t": "Wahr oder Quatsch", "n": 58}, {"c": "joker", "l": 1, "q": "Seeotter halten sich beim Schlafen manchmal an den Pfoten fest, damit sie nicht auseinandertreiben.", "a": "Wahr. Manche wickeln sich zusätzlich in Seetang ein.", "t": "Wahr oder Quatsch", "n": 59}, {"c": "joker", "l": 1, "q": "Goldfische haben ein Gedächtnis von nur drei Sekunden.", "a": "Quatsch. Goldfische können sich Dinge über Monate merken und lassen sich sogar trainieren.", "t": "Wahr oder Quatsch", "n": 60}, {"c": "joker", "l": 1, "q": "Ein Blitz ist heißer als die Oberfläche der Sonne.", "a": "Wahr. Ein Blitzkanal wird um die 30.000 °C heiß, die Sonnenoberfläche etwa 5.500 °C.", "t": "Wahr oder Quatsch", "n": 61}, {"c": "joker", "l": 1, "q": "Erzähl einen Fun Fact über dich, den niemand erraten würde.", "t": "Fun Fact", "n": 62}, {"c": "joker", "l": 1, "q": "Zwei Wahrheiten, eine Lüge. Thema: deine Kindheit.", "h": "Die andere Person tippt auf die Lüge. Richtig getippt bringt einen Punkt.", "n": 63}, {"c": "joker", "l": 1, "q": "„Überraschungen sind überbewertet.“", "h": "Daumen hoch oder runter, gleichzeitig. Wer allein dasteht, verteidigt sich 30 Sekunden.", "t": "Hot Take", "n": 64}, {"c": "joker", "l": 1, "q": "„Karaoke ist immer eine gute Idee.“", "h": "Daumen hoch oder runter, gleichzeitig. Wer allein dasteht, verteidigt sich 30 Sekunden.", "t": "Hot Take", "n": 65}, {"c": "joker", "l": 1, "q": "Zeig das letzte Foto, das du von Essen gemacht hast. Wo war das?", "t": "Beweisstück", "n": 66}, {"c": "joker", "l": 1, "q": "Zeig ein Foto von einem Ort, an den du sofort zurückwürdest.", "t": "Beweisstück", "n": 67}, {"c": "joker", "l": 1, "q": "Welche völlig irrationale Meinung verteidigst du bis zum Ende?", "n": 68}, {"c": "joker", "l": 1, "q": "Du musst gleich einen 20-minütigen Vortrag halten. Ohne Vorbereitung. Was ist dein Thema?", "n": 69}, {"c": "joker", "l": 1, "q": "Bring mir in drei Minuten etwas bei, das du gut kannst.", "t": "Mini-Mission", "n": 70}, {"c": "joker", "l": 1, "q": "Wir treten morgen als Team in einem Wettbewerb an. Welcher gibt uns die besten Chancen?", "f": "Und wer von uns ist der Schwachpunkt?", "n": 71}, {"c": "joker", "l": 2, "q": "Wäre unser bisheriges Kennenlernen ein Film: Welches Genre – und wie hieße er?", "n": 72}, {"c": "joker", "l": 3, "q": "Beschreibt euch gegenseitig in genau drei Wörtern. Keine Erklärungen, keine Nachverhandlungen.", "t": "Challenge", "n": 73}, {"c": "joker", "l": 4, "q": "Sag mir etwas, das du an mir magst, aber bisher noch nicht gesagt hast.", "h": "Ein Detail reicht. Klein ist ausdrücklich erlaubt.", "t": "Challenge", "n": 74}]};
+  var cats = {}; DATA.cats.forEach(function(c) { cats[c.key] = c; });
+  var byN = {}; DATA.cards.forEach(function(c) { byN[c.n] = c; });
+  document.documentElement.classList.add("js");
+
+  var store = {
+    get: function(k, d) { try { var v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } },
+    set: function(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+  };
+
+  var filter = "all";
+  var drawn = {}, played = 0, lastDeep = -99, lastTop = -99;
+  var later = store.get("zdz-later", []);
+  var history = [];
+  var pos = -1;
+  var favs = store.get("zdz2-favs", []);
+
+  var $ = function(id) { return document.getElementById(id); };
+  var cardEl = $("card"), bodyEl = $("cardBody"), favBtn = $("fav");
+
+  function esc(s) { return String(s).replace(/[&<>"]/g, function(ch) { return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[ch]; }); }
+  function pool(f) { return DATA.cards.filter(function(c) { return f === "all" || c.c === f; }).map(function(c) { return c.n; }); }
+  function shuffle(a) { for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+
+  function cands(f) { return DATA.cards.filter(function(c) { return (f === "all" || c.c === f) && !drawn[c.n]; }); }
+  function rnd(a) { return a[Math.floor(Math.random() * a.length)]; }
+
+  // Leichte Karten zuerst; tiefere mischen sich nach und nach unter, nie zwei direkt hintereinander.
+  function drawFrom(f) {
+    var cs = cands(f);
+    if (!cs.length) {
+      DATA.cards.forEach(function(c) { if (f === "all" || c.c === f) delete drawn[c.n]; });
+      cs = cands(f).filter(function(c) { return c.n !== history[pos]; });
+      status("Alle Karten gezogen – frisch gemischt.");
+    }
+    var light = cs.filter(function(c) { return c.l <= 2; });
+    var mid = cs.filter(function(c) { return c.l === 3; });
+    var top = cs.filter(function(c) { return c.l === 4; });
+    var gap = played - lastDeep;
+    var ok3 = played >= 6 && gap >= (played < 14 ? 3 : 2) && mid.length;
+    var ok4 = played >= 14 && gap >= 2 && played - lastTop >= 6 && top.length;
+    var bucket = null;
+    if ((ok3 || ok4) && Math.random() < Math.max(played < 14 ? 0.25 : 0.4, Math.min(0.7, 1.6 * (mid.length + top.length) / cs.length))) {
+      bucket = ok4 && (!ok3 || Math.random() < 0.4) ? top : mid;
+    }
+    if (!bucket) bucket = light.length ? light : (mid.length ? mid : top);
+    var c = rnd(bucket);
+    drawn[c.n] = 1; played++;
+    if (c.l >= 3) lastDeep = played;
+    if (c.l === 4) lastTop = played;
+    return c.n;
+  }
+
+  function render(n, animate) {
+    var c = byN[n], cat = cats[c.c];
+    cardEl.style.setProperty("--accent", cat.color);
+    cardEl.setAttribute("data-l", c.l);
+    bodyEl.innerHTML =
+      '<div class="card-top"><span class="cat">' + esc(cat.name) + '</span>' + (c.t ? '<span class="tag">' + esc(c.t) + '</span>' : '') + '</div>' +
+      '<p class="q">' + esc(c.q) + '</p>' +
+      (c.h ? '<p class="help">' + esc(c.h) + '</p>' : '') +
+      (c.f ? '<p class="follow"><span>Nachfrage</span> ' + esc(c.f) + '</p>' : '') +
+      (c.a ? '<details class="ans"><summary>Auflösung zeigen</summary><p>' + esc(c.a) + '</p></details>' : '') +
+      '<div class="card-foot"><span class="no">Nº ' + (n < 10 ? "0" + n : n) + '</span><span class="mark">Zwischen den Zeilen</span></div>';
+    var on = favs.indexOf(n) > -1;
+    favBtn.classList.toggle("on", on);
+    favBtn.setAttribute("aria-pressed", on);
+    favBtn.setAttribute("aria-label", on ? "Nicht mehr merken" : "Karte merken");
+    if (animate) { cardEl.classList.remove("anim"); void cardEl.offsetWidth; cardEl.classList.add("anim"); }
+    $("back").disabled = pos <= 0;
+    if (!statusLock) $("status").textContent = played === 1 ? "1 Karte gespielt" : played + " Karten gespielt";
+  }
+
+  var statusLock = false, statusTimer;
+  function status(msg) {
+    statusLock = true; $("status").textContent = msg;
+    clearTimeout(statusTimer); statusTimer = setTimeout(function() { statusLock = false; if (pos > -1) render(history[pos], false); }, 2200);
+  }
+
+  function next() {
+    if (pos < history.length - 1) { pos++; render(history[pos], true); return; }
+    var n = drawFrom(filter);
+    history.push(n); pos = history.length - 1;
+    render(n, true);
+  }
+  function back() { if (pos > 0) { pos--; render(history[pos], true); } }
+
+  function setFilter(f) {
+    filter = f;
+    Array.prototype.forEach.call(document.querySelectorAll(".chip"), function(b) {
+      var on = b.getAttribute("data-f") === f; b.classList.toggle("on", on); b.setAttribute("aria-pressed", on);
+    });
+    history = history.slice(0, pos + 1);
+    next();
+  }
+
+  function renderFavs() {
+    $("favToggle").textContent = "Gemerkt (" + favs.length + ")";
+    var ul = $("favList");
+    if (!favs.length) { ul.innerHTML = '<li class="empty">Noch nichts gemerkt. Tippe auf das Lesezeichen einer Karte.</li>'; return; }
+    ul.innerHTML = favs.slice().sort(function(a, b) { return a - b; }).map(function(n) {
+      var c = byN[n];
+      return '<li><button data-n="' + n + '"><small style="color:' + cats[c.c].color + '">' + (n < 10 ? "0" + n : n) + '</small><span>' + esc(c.q) + '</span></button></li>';
+    }).join("");
+  }
+
+  favBtn.addEventListener("click", function() {
+    var n = history[pos], i = favs.indexOf(n);
+    if (i > -1) favs.splice(i, 1); else favs.push(n);
+    store.set("zdz2-favs", favs); renderFavs(); render(n, false);
+  });
+  $("favList").addEventListener("click", function(e) {
+    var b = e.target.closest("button[data-n]"); if (!b) return;
+    var n = +b.getAttribute("data-n");
+    history = history.slice(0, pos + 1); history.push(n); pos = history.length - 1;
+    render(n, true); window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+  $("favToggle").addEventListener("click", function() { $("favs").classList.toggle("open"); });
+  $("scoreToggle").addEventListener("click", function() { $("score").classList.toggle("open"); });
+  $("reset").addEventListener("click", function() { drawn = {}; played = 0; lastDeep = -99; lastTop = -99; history = history.slice(0, pos + 1); next(); status("Neu gemischt."); });
+  $("next").addEventListener("click", next);
+  $("back").addEventListener("click", back);
+  document.querySelector(".filters").addEventListener("click", function(e) {
+    var b = e.target.closest(".chip"); if (b) setFilter(b.getAttribute("data-f"));
+  });
+  Array.prototype.forEach.call(document.querySelectorAll(".pl"), function(pl, i) {
+    var b = pl.querySelector("b"), inp = pl.querySelector("input");
+    var s = store.get("zdz2-score", [{n:"",p:0},{n:"",p:0}]);
+    inp.value = s[i].n; b.textContent = s[i].p;
+    function save() { s = store.get("zdz2-score", [{n:"",p:0},{n:"",p:0}]); s[i] = { n: inp.value, p: +b.textContent }; store.set("zdz2-score", s); }
+    inp.addEventListener("input", save);
+    pl.addEventListener("click", function(e) {
+      var d = e.target.getAttribute("data-d"); if (!d) return;
+      b.textContent = Math.max(0, +b.textContent + +d); save();
+    });
+  });
+  document.addEventListener("keydown", function(e) {
+    if (e.target.tagName === "INPUT" || e.target.tagName === "SUMMARY" || e.target.tagName === "SELECT" || e.target.tagName === "BUTTON") return;
+    if (e.key === "ArrowRight" || e.key === " ") { e.preventDefault(); next(); }
+    else if (e.key === "ArrowLeft") { back(); }
+  });
+  var tx = null, ty = null;
+  cardEl.addEventListener("touchstart", function(e) { tx = e.touches[0].clientX; ty = e.touches[0].clientY; }, { passive: true });
+  cardEl.addEventListener("touchend", function(e) {
+    if (tx === null) return;
+    var dx = e.changedTouches[0].clientX - tx, dy = e.changedTouches[0].clientY - ty; tx = null;
+    if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) { dx < 0 ? next() : back(); }
+  });
+
+  function renderLater() {
+    $("laterToggle").textContent = "Irgendwann mal (" + later.length + ")";
+    $("laterList").innerHTML = later.length ? later.map(function(t, i) {
+      return '<li><span>' + esc(t) + '</span><button data-i="' + i + '" aria-label="Entfernen" title="Entfernen">×</button></li>';
+    }).join("") : '<li class="empty">Noch leer.</li>';
+  }
+  $("laterToggle").addEventListener("click", function() { $("later").classList.toggle("open"); });
+  $("laterForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+    var v = $("laterInput").value.trim(); if (!v) return;
+    later.push(v); store.set("zdz-later", later); $("laterInput").value = ""; renderLater();
+  });
+  $("laterList").addEventListener("click", function(e) {
+    var b = e.target.closest("button[data-i]"); if (!b) return;
+    later.splice(+b.getAttribute("data-i"), 1); store.set("zdz-later", later); renderLater();
+  });
+
+  renderFavs();
+  renderLater();
+  next();
+})();
+</script>
+
+<script>
+(function () {
+  'use strict';
+  var translations = {"Zwischen den Zeilen": "Between the Lines", "Ein Gesprächsspiel für zwei": "A conversation game for two", "Zwischen den": "Between the", "Zeilen": "Lines", "Ein Spiel über das, was ihr noch nicht voneinander wisst. Noch.": "A game about what you don't know about each other. Yet.", "Kategorie wählen": "Choose a category", "Alle gemischt": "Mix them all", "Kleinigkeiten": "The Little Things", "Gedankenlesen": "Mind Reading", "Abenteuer & Was-wäre-wenn": "Adventures & What Ifs", "Das Kleingedruckte": "The Fine Print", "Joker": "Wild Cards", "Karte merken": "Save card", "Nicht mehr merken": "Unsave card", "Merken": "Save", "Vorherige Karte": "Previous card", "← Zurück": "← Back", "Nächste Karte": "Next card", "Punkte zählen": "Keep score", "Neu mischen": "Reshuffle", "Name Person 1": "Player 1 name", "Name Person 2": "Player 2 name", "Punkt abziehen": "Subtract a point", "Punkt hinzufügen": "Add a point", "Irgendwann mal": "Someday", "Wenn eine Antwort nach einem Plan klingt, kommt sie hierher.": "When an answer sounds like a plan, put it here.", "z. B. Sonnenaufgang auf einem Berg": "e.g. watching the sunrise from a mountain", "Idee notieren": "Write down an idea", "Notieren": "Add idea", "Gemerkte Karten": "Saved cards", "So wird gespielt": "How to play", "Zieht abwechselnd eine Karte.": "Take turns drawing a card.", "Beide antworten – außer die Karte sagt etwas anderes.": "Both of you answer, unless the card says otherwise.", "Bei": "For", "Schnellfeuer": "Quick Fire", "und": "and", "Wahr oder Quatsch": "True or False", "tippt ihr zuerst. Dann wird aufgelöst.": "make your guesses first. Then reveal the answers.", "Kleine Beispiele auf der Karte helfen beim Antworten. Sie sind keine Vorgabe.": "The examples on each card are there to help, not to limit your answers.", "Jede Karte darf übersprungen werden. Ohne Begründung.": "You can skip any card. No explanation needed.", "Am Anfang kommen eher leichte Karten. Je länger ihr spielt, desto öfter mischt sich eine tiefere darunter.": "The game starts with lighter cards. As you play, deeper questions gradually join the mix.", "Optional: Jeder richtige Tipp bringt einen Punkt. Wer am Ende weniger hat, besorgt den Nachtisch.": "Optional: each correct guess earns a point. Whoever has fewer points at the end gets dessert.", "Weiter mit": "Move on with", ", Leertaste oder Wischen nach links. Zurück mit": ", the space bar or a swipe left. Go back with", "oder Wischen nach rechts. Ein Lesezeichen merkt sich Karten für später, und unter „Irgendwann mal“ landen Ideen, die ihr wirklich machen wollt.": "or a swipe right. Bookmark cards for later, and use ‘Someday’ for ideas you actually want to try.", "Falls hier keine Knöpfe erscheinen: Die Datei herunterladen und in einem normalen Browser öffnen (Safari, Chrome, Firefox, Edge) – nicht in einer Dateivorschau.": "If no buttons appear, download the file and open it in a regular browser (Safari, Chrome, Firefox or Edge), rather than a file preview.", "Zwischen den Zeilen · 74 Karten · sechs Kategorien": "Between the Lines · 74 cards · six categories", "Nachfrage": "Follow-up", "Auflösung zeigen": "Reveal answer", "Alle Karten gezogen – frisch gemischt.": "All cards drawn — freshly shuffled.", "Neu gemischt.": "Reshuffled.", "Noch nichts gemerkt. Tippe auf das Lesezeichen einer Karte.": "No saved cards yet. Tap the bookmark on a card.", "Entfernen": "Remove", "Noch leer.": "Nothing here yet.", "Rangliste": "Rank them", "Entweder-oder": "This or that", "Satzanfang": "Finish the sentence", "Beweisstück": "Show the evidence", "Mini-Mission": "Mini Mission", "Was hebt deine Laune zuverlässig in unter fünf Minuten?": "What reliably lifts your mood in under five minutes?", "Ein Song, ein Snack, ein bestimmter Mensch, ein Ort?": "A song, a snack, a particular person, a place?", "Womit verbringst du gerade die meiste Freizeit – und womit würdest du gern mehr Zeit verbringen?": "What takes up most of your free time right now — and what would you like to spend more time doing?", "Wie sieht ein ganz normaler Dienstag bei dir aus? Vom Wecker bis zum Einschlafen.": "What does an ordinary Tuesday look like for you? From your alarm going off to falling asleep.", "Welcher Moment davon ist der beste?": "Which moment is the best?", "Wofür gibst du überraschend viel Geld aus?": "What do you spend a surprising amount of money on?", "Kaffee, Sneaker, Technik, Essen gehen, Bücher, Pflanzen …": "Coffee, sneakers, gadgets, eating out, books, plants …", "Welches Hobby hast du mal mit voller Begeisterung angefangen – und wieder aufgegeben?": "Which hobby did you throw yourself into — and then give up?", "Was war der Moment, in dem es vorbei war?": "What was the moment you knew it was over?", "Welches Gericht kannst du richtig gut kochen – und welches würdest du nie im Leben selbst versuchen?": "What dish can you cook really well — and which would you never attempt yourself?", "Welches Talent hast du, das man dir nicht ansieht?": "What talent do you have that people wouldn't expect?", "Kleine Talente zählen: rückwärts sprechen, Orientierung, Akzente …": "Small talents count: talking backwards, finding your way, doing accents …", "Bring in deine Reihenfolge: Sonnenaufgang, Sternenhimmel, Gewitter, erster Schnee.": "Rank these: sunrise, a starry sky, a thunderstorm, the first snow.", "Welches Geschenk hat dich mal richtig erwischt – im besten Sinne? Was hat es so gut gemacht?": "What gift really got to you — in the best way? What made it so good?", "Wobei bist du überraschend pingelig – obwohl es eigentlich völlig egal sein sollte?": "What are you surprisingly particular about, even though it really shouldn't matter?", "Wie die Spülmaschine eingeräumt wird, Schriftarten, Pünktlichkeit …": "How the dishwasher is loaded, fonts, punctuality …", "Wie sieht mein perfekter Sonntag aus – von morgens bis abends?": "What does my perfect Sunday look like, from morning to night?", "Worin bin ich heimlich ehrgeizig?": "What am I secretly competitive about?", "Wie viele ungelesene Nachrichten habe ich gerade? Wer auf zehn genau liegt, bekommt den Punkt.": "How many unread messages do I have right now? Guess within ten to get the point.", "Beweisfoto bitte.": "Photo evidence, please.", "Was mache ich als Erstes, wenn ich in einer neuen Stadt ankomme?": "What's the first thing I do when I arrive in a new city?", "Welches Tier wäre ich? Schmeichelhaft oder ehrlich – deine Entscheidung.": "What animal would I be? Flattering or honest — your choice.", "Was bestelle ich, wenn ich die Speisekarte nicht lesen kann und einfach auf etwas zeigen muss?": "What would I order if I couldn't read the menu and just had to point at something?", "Jemand bereitet etwas Besonderes für mich vor. Will ich überrascht werden – oder lieber mitplanen?": "Someone is planning something special for me. Would I want a surprise — or a say in the planning?", "Erlebnis oder Gegenstand: Was bleibt mir von einem Geschenk länger im Kopf?": "An experience or an object: which kind of gift stays with me longer?", "Was war mein erster Eindruck von dir?": "What was my first impression of you?", "Und wie falsch lag ich?": "And how wrong was I?", "Was ist mir als Erstes an dir aufgefallen – abgesehen vom Offensichtlichen?": "What was the first thing I noticed about you, apart from the obvious?", "Erst raten, dann verraten. Beide Richtungen.": "Guess first, then reveal. Take turns.", "Was glaubst du: Wann habe ich gemerkt, dass ich dich mehr als nur nett finde?": "When do you think I realized I liked you as more than just a friend?", "Ein Ort, ein Tag oder ein Satz reicht als Tipp.": "A place, a day or something someone said is enough of a guess.", "Was wolltest du schon ewig mal ausprobieren und hast es irgendwie nie gemacht?": "What have you wanted to try for ages but somehow never got around to?", "Ein Sport, ein Kurs, ein Ort, ein Essen, ein Konzert …": "A sport, a class, a place, a dish, a concert …", "Ein freies Wochenende, alles im Umkreis von drei Stunden ist erlaubt. Wie sieht der Plan aus?": "A free weekend, and anywhere within three hours is fair game. What's the plan?", "Lieber einen Tag lang etwas komplett Neues lernen – oder einen Tag mit ordentlich Adrenalin?": "Would you rather spend a day learning something completely new or getting a serious adrenaline rush?", "Gipfelwanderung, Rennen gegen die Uhr, Kurs bei einem Profi oder eine Nacht unter Sternen. Deine Reihenfolge?": "A hike to a summit, a race against the clock, a class with a pro or a night under the stars. How would you rank them?", "Roadtrip-Grundsatzfragen: Wer bestimmt die Musik, wie viele Stopps sind erlaubt, und was ist der ultimative Tankstellen-Snack?": "Road trip essentials: who picks the music, how many stops are allowed, and what's the ultimate gas station snack?", "Was ist das Spontanste, das du je gemacht hast?": "What's the most spontaneous thing you've ever done?", "Du darfst einen Tag lang bei jemandem in die Lehre gehen – egal wem, egal in welchem Handwerk. Bei wem?": "You can spend a day learning from anyone, in any craft or profession. Who would you choose?", "Sterneköchin, Tätowierer, Astronautin, Barista, Bergführer …": "A Michelin-starred chef, a tattoo artist, an astronaut, a barista, a mountain guide …", "Jemand plant einen ganzen Tag für dich. Was würde ihn richtig gut machen – und was würde ihn sofort ruinieren?": "Someone plans an entire day for you. What would make it wonderful — and what would ruin it instantly?", "Erzähl vom besten Tag, den du je hattest. Oder zumindest von einem ernsthaften Kandidaten.": "Tell me about the best day you've ever had. Or at least a serious contender.", "Welches Abenteuer sollten wir zwei mal zusammen machen?": "What adventure should the two of us go on together?", "Und wer von uns gibt als Erstes auf?": "And which of us would give up first?", "Schreiben oder telefonieren? Und ab wann ist eine Sprachnachricht zu lang?": "Texting or calling? And when does a voice message become too long?", "Nach einem anstrengenden Tag: Gesellschaft, Ablenkung, darüber reden oder Ruhe?": "After an exhausting day: company, distraction, talking it through or peace and quiet?", "Welche kleine Aufmerksamkeit freut dich mehr, als sie eigentlich sollte?": "What little gesture makes you happier than you'd expect?", "Kaffee mitbringen, sich an etwas erinnern, ein Foto schicken …": "Bringing you coffee, remembering something, sending a photo …", "Was verstehen Leute an dir oft falsch, wenn sie dich gerade erst kennenlernen?": "What do people often get wrong about you when they've just met you?", "Was nervt dich schneller, als man es dir zutrauen würde?": "What gets on your nerves faster than people would expect?", "Unpünktlichkeit, Schmatzen, vage Pläne, laute Telefonate …": "Being late, loud chewing, vague plans, loud phone calls …", "Welche deiner Eigenarten braucht eine gewisse Eingewöhnungszeit? Warnhinweise ausdrücklich erwünscht.": "Which of your quirks takes some getting used to? Warning labels are welcome.", "Woran merkt man, dass du jemanden magst – auch wenn du es nicht sagst?": "How can someone tell you like them, even when you don't say it?", "Was sollte man über dich wissen, um dich zu verstehen, wenn du gerade still bist?": "What should someone know about you to understand you when you're quiet?", "Ich brauche kurz Zeit · ich schreibe lieber, als ich rede · ich werde albern, wenn ich nervös bin …": "I need a moment · I'd rather write than talk · I get silly when I'm nervous …", "Bei einem Missverständnis: sofort klären oder erst mal Abstand?": "When there's a misunderstanding: clear it up straight away or take some space first?", "Und was hilft dir dabei?": "And what helps you do that?", "Für welches Kompliment hast du insgeheim eine Schwäche?": "What compliment do you secretly have a soft spot for?", "Worüber hast du in den letzten Jahren deine Meinung geändert?": "What have you changed your mind about over the past few years?", "Was hätte dein sechzehnjähriges Ich zu deinem heutigen Leben gesagt?": "What would your sixteen-year-old self say about your life today?", "Welche Erinnerung würdest du gern noch einmal zum ersten Mal erleben?": "Which memory would you love to experience for the first time again?", "Was möchtest du in den nächsten fünf Jahren unbedingt noch erleben?": "What do you definitely want to experience in the next five years?", "Wovor hattest du zuletzt richtig Respekt – und hast es trotzdem gemacht?": "What was the last thing that really intimidated you — but you did it anyway?", "Worauf bist du stolz, obwohl es in Gesprächen nie vorkommt?": "What are you proud of that never comes up in conversation?", "Was ist dir bei Menschen, mit denen du viel Zeit verbringst, wirklich wichtig – und was ist ein No-Go?": "What really matters to you in the people you spend lots of time with — and what's a dealbreaker?", "Wer hat dich als Mensch am meisten geprägt?": "Who has shaped you most as a person?", "Familie, eine Lehrerin, ein Freund, jemand völlig Unerwartetes …": "Family, a teacher, a friend, someone completely unexpected …", "Was war die schwierigste Phase der letzten Jahre – und was hat dir da rausgeholfen?": "What was the hardest period of the past few years — and what helped you through it?", "Welcher Moment der letzten Wochen war für dich ein kleines Highlight?": "What was a small highlight for you in the past few weeks?", "Ein Satz, ein Ort oder ein Augenblick reicht.": "Something someone said, a place or a single moment is enough.", "Vervollständige den Satz: „Mit dir ist es leicht, …“": "Finish the sentence: ‘With you, it's easy to …’", "Beide antworten. Ein halber Satz zählt auch.": "Both of you answer. Half a sentence counts too.", "Wann hast du gemerkt, dass aus „befreundet“ gerade etwas anderes wird?": "When did you realize that being friends was turning into something else?", "Kaffee oder Tee? Hund oder Katze? Berge oder Meer? Früh oder spät? Süß oder salzig?": "Coffee or tea? Dogs or cats? Mountains or the sea? Early or late? Sweet or salty?", "Auf „drei“ antworten beide gleichzeitig. Jede Übereinstimmung ein Punkt.": "Both answer on the count of three. One point for each match.", "Museum oder Freizeitpark? Plan oder ins Blaue? Gewinnen oder Spaß? Kochen oder bestellen? Sterne oder Stadtlichter?": "Museum or theme park? Make a plan or wing it? Winning or having fun? Cook or order in? Stars or city lights?", "Erstes Konzert? Erstes Handy? Erster Promi-Schwarm? Erster Job? Erstes Mal im Ausland?": "First concert? First phone? First celebrity crush? First job? First trip abroad?", "Kurze Antworten. Nachfragen erst danach.": "Quick answers. Save follow-up questions for afterwards.", "Ein Tag auf der Venus dauert länger als ein Jahr auf der Venus.": "A day on Venus lasts longer than a year on Venus.", "Wahr. Eine Drehung um sich selbst dauert dort etwa 243 Erdtage, eine Runde um die Sonne nur rund 225.": "True. One rotation takes about 243 Earth days; one orbit around the Sun takes only about 225.", "Die Chinesische Mauer kann man vom Mond aus mit bloßem Auge sehen.": "You can see the Great Wall of China from the Moon with the naked eye.", "Quatsch. Dafür ist sie viel zu schmal. Selbst aus der Erdumlaufbahn ist sie ohne Hilfsmittel kaum zu erkennen.": "False. It's far too narrow. Even from Earth's orbit, it's hard to make out without assistance.", "Seeotter halten sich beim Schlafen manchmal an den Pfoten fest, damit sie nicht auseinandertreiben.": "Sea otters sometimes hold paws while sleeping so they don't drift apart.", "Wahr. Manche wickeln sich zusätzlich in Seetang ein.": "True. Some also wrap themselves in kelp.", "Goldfische haben ein Gedächtnis von nur drei Sekunden.": "Goldfish have a memory of only three seconds.", "Quatsch. Goldfische können sich Dinge über Monate merken und lassen sich sogar trainieren.": "False. Goldfish can remember things for months and can even be trained.", "Ein Blitz ist heißer als die Oberfläche der Sonne.": "Lightning is hotter than the surface of the Sun.", "Wahr. Ein Blitzkanal wird um die 30.000 °C heiß, die Sonnenoberfläche etwa 5.500 °C.": "True. A lightning channel reaches around 30,000 °C; the Sun's surface is about 5,500 °C.", "Erzähl einen Fun Fact über dich, den niemand erraten würde.": "Share a fun fact about yourself that nobody would guess.", "Zwei Wahrheiten, eine Lüge. Thema: deine Kindheit.": "Two truths and a lie. The theme: your childhood.", "Die andere Person tippt auf die Lüge. Richtig getippt bringt einen Punkt.": "The other person guesses the lie. A correct guess earns a point.", "„Überraschungen sind überbewertet.“": "‘Surprises are overrated.’", "Daumen hoch oder runter, gleichzeitig. Wer allein dasteht, verteidigt sich 30 Sekunden.": "Thumbs up or down, at the same time. If you disagree, each of you has 30 seconds to defend your position.", "„Karaoke ist immer eine gute Idee.“": "‘Karaoke is always a good idea.’", "Zeig das letzte Foto, das du von Essen gemacht hast. Wo war das?": "Show the last photo you took of food. Where was it?", "Zeig ein Foto von einem Ort, an den du sofort zurückwürdest.": "Show a photo of somewhere you'd go back to in a heartbeat.", "Welche völlig irrationale Meinung verteidigst du bis zum Ende?": "What completely irrational opinion will you defend to the bitter end?", "Du musst gleich einen 20-minütigen Vortrag halten. Ohne Vorbereitung. Was ist dein Thema?": "You have to give a twenty-minute talk right now. No preparation. What's your topic?", "Bring mir in drei Minuten etwas bei, das du gut kannst.": "Teach me something you're good at in three minutes.", "Wir treten morgen als Team in einem Wettbewerb an. Welcher gibt uns die besten Chancen?": "We're entering a competition as a team tomorrow. Which one gives us the best chance?", "Und wer von uns ist der Schwachpunkt?": "And which of us is the weak link?", "Wäre unser bisheriges Kennenlernen ein Film: Welches Genre – und wie hieße er?": "If the story of us getting to know each other were a movie, what genre would it be — and what would it be called?", "Beschreibt euch gegenseitig in genau drei Wörtern. Keine Erklärungen, keine Nachverhandlungen.": "Describe each other in exactly three words. No explanations, no negotiations.", "Sag mir etwas, das du an mir magst, aber bisher noch nicht gesagt hast.": "Tell me something you like about me that you haven't said before.", "Ein Detail reicht. Klein ist ausdrücklich erlaubt.": "One detail is enough. Small things are very welcome."};
+  var language = 'de';
+  try { language = localStorage.getItem('zdz-language') === 'en' ? 'en' : 'de'; } catch (_) {}
+  var originals = new WeakMap();
+  var attributes = new WeakMap();
+  var select = document.getElementById('language');
+
+  function translate(value) {
+    if (language === 'de') return value;
+    var key = value.trim(), result = translations[key];
+    if (result === undefined) {
+      var match;
+      if ((match = key.match(/^Gemerkt \((\d+)\)$/))) result = 'Saved (' + match[1] + ')';
+      else if ((match = key.match(/^Irgendwann mal \((\d+)\)$/))) result = 'Someday (' + match[1] + ')';
+      else if ((match = key.match(/^(\d+) Karten? gespielt$/))) result = match[1] + (match[1] === '1' ? ' card played' : ' cards played');
+    }
+    return result === undefined ? value : value.replace(key, result);
+  }
+
+  function localize() {
+    observer.disconnect();
+    document.documentElement.lang = language;
+    select.value = language;
+    var walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+    var node;
+    while ((node = walker.nextNode())) {
+      var parent = node.parentElement;
+      // Never translate names or ideas entered by the players.
+      if (!parent || parent.closest('script,style,noscript,#language,#laterList li > span')) continue;
+      var previous = originals.get(node);
+      var source = previous && node.nodeValue === previous.output ? previous.source : node.nodeValue;
+      var output = translate(source);
+      originals.set(node, { source: source, output: output });
+      if (node.nodeValue !== output) node.nodeValue = output;
+    }
+    document.querySelectorAll('[aria-label],[title],[placeholder]').forEach(function (el) {
+      var saved = attributes.get(el) || {};
+      ['aria-label', 'title', 'placeholder'].forEach(function (name) {
+        if (!el.hasAttribute(name)) return;
+        var value = el.getAttribute(name), previous = saved[name];
+        var source = previous && previous.output === value ? previous.source : value;
+        var output = translate(source);
+        saved[name] = { source: source, output: output };
+        if (value !== output) el.setAttribute(name, output);
+      });
+      attributes.set(el, saved);
+    });
+    document.title = language === 'en' ? 'Between the Lines' : 'Zwischen den Zeilen';
+    document.querySelector('meta[name="description"]').content = translate('Ein Spiel über das, was ihr noch nicht voneinander wisst. Noch.');
+    observer.observe(document.body, { childList: true, subtree: true, characterData: true, attributes: true, attributeFilter: ['aria-label','title','placeholder'] });
+  }
+  var observer = new MutationObserver(localize);
+  select.addEventListener('change', function () {
+    language = select.value;
+    try { localStorage.setItem('zdz-language', language); } catch (_) {}
+    localize();
+  });
+  localize();
+})();
+
+</script>
+</body></html>
